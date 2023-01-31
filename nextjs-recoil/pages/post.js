@@ -6,7 +6,7 @@ const PostPage = () => {
   const [pageName, setPageName] = useRecoilState(pageNameState);
   //suspaense 대신해서 recoilvalueLoadable 사용
   const name = useRecoilValueLoadable(getNameSelector);
-
+  //state -> selector의 상태(hasValue, hasError, loading 존재)
   switch (name.state) {
     case "hasValue":
       return (
@@ -38,6 +38,7 @@ const PostPage = () => {
     case "loading":
       return <div>Loading</div>;
     case "hasError":
+      //contents -> 각 상태에 따른 값으로 hasValue(실제값),hasError(Error객체), loading(Promise객체)
       return <div>{name.contents}</div>;
   }
 };
