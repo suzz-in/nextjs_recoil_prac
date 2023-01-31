@@ -1,34 +1,53 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+[해당 글](https://parkgang.github.io/blog/2021/05/06/using-recoil-in-nextjs/) 을 참고하여 작업했습니다. 
+## _app.js 
+```javaScript
+import { RecoilRoot } from "recoil";
 
-## Getting Started
+function MyApp({ Component, pageProps }) {
+  return (
+    <RecoilRoot>
+      <Component {...pageProps} />
+    </RecoilRoot>
+  );
+}
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
+export default MyApp;
 ```
+next.js는 모든 페이지를 렌더링하기 전에, _app.js를 거친다. 따라서 ```<RecoilRoot>``` 를 _app.js에 적용해 줌
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## atom 
+```javaScript
+import { atom } from "recoil";
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+export const pageNameState = atom({
+  key: "pageNameState",
+  default: "",
+}); 
+```
+```states/index.js``` 파일 내에 atom 사용하여 선언 
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## 비동기처리 
+```javaScript
+import { selector } from "recoil";
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+export const getNameSelector = selector({
+  key: "getNameSelector",
+  get: async () => {
+    const res = await axios.get("http://localhost:3000/api/hello");
+    return res.data; //res 모두 리턴하면 run time error 발생함. (dev환경에서)
+  },
+});
+```
+selector 사용해서 비동기 작업.    
+💁🏻‍♀️ res 전체 값을 return 하게 되면 에러 발생. 따라서 res.data를 return
+```javaScript
+const name = useRecoilValueLoadable(getNameSelector);
+```
+```useRecoilValueLoadable()```를 ```suspense``` 대신하여 사용함    
+```Loadable```은 atom이나 selector의 현재 상태를 나타내는 객체이며 아래와 같은 인터페이스를 가짐   
+- state : atom 혹은 selector의 최신 상태, ```hasValue``` , ``` hasError``` , ```Loading```의 상태를 가짐   
+- contents : Loadable에 의해 대표되는 값, state에 따라 다음 값을 가짐   
+  +  ```hasValue``` : 실제 값   
+  + ```hasError ``` : Error객체   
+  + ```Loading``` : promise 객체   
+  
