@@ -51,3 +51,4 @@ const name = useRecoilValueLoadable(getNameSelector);
   + ```hasError ``` : Error객체   
   + ```Loading``` : promise 객체   
   
+  [리코일 공식문서 Loadable](https://recoiljs.org/ko/docs/api-reference/core/Loadable/)
