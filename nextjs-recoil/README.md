@@ -52,6 +52,8 @@ const name = useRecoilValueLoadable(getNameSelector);
   + ```hasError ``` : Error객체   
   + ```Loading``` : promise 객체   
   
+[리코일 공식문서 Loadable](https://recoiljs.org/ko/docs/api-reference/core/Loadable/)
+  
 ### 2️⃣ Selecotor + ``` <Suspense> ```   
 ```javaScript
  const name = useRecoilValue(getNameSelector); 
@@ -65,4 +67,4 @@ const name = useRecoilValueLoadable(getNameSelector);
 next.js 12 버전 이하에서는 ```React.Suspense``` 를 지원하지 않았으나, 12 이상 부터는 지원한다.   
 따라서 앞서 ```useRecoilValueLoadable``` 을 통해 렌더링할 데이터가 도착하기 이전(loading, 비동기 처리하고 있을 때 ) 보여줄 fallback UI를 ```Suspense```를 통해 보여준 것이다. 
         
-  [리코일 공식문서 Loadable](https://recoiljs.org/ko/docs/api-reference/core/Loadable/)
+ 
